@@ -32,26 +32,6 @@
   <script>
     "use strict";
 
-    function sayHello(){
-        let firstName = document.querySelector("#input-firstname").value;
-        firstName = firstName.trim() || "Peter";
-
-        let lastName = document.querySelector("#input-lastname").value;
-        lastName = lastName.trim() || "Parker";
-
-        document.querySelector("#output").innerHTML = `Hello ${firstName} ${lastName}`;
-    }
-
-    function sayGoodBye(){
-        let firstName = document.querySelector("#input-firstname").value;
-        firstName = firstName.trim() || "Peter";
-
-        let lastName = document.querySelector("#input-lastname").value;
-        lastName = lastName.trim() || "Parker";
-
-        document.querySelector("#output").innerHTML = `Goodbye ${firstName} ${lastName}`;
-    }
-
     function greet(greeting){
         let firstName = document.querySelector("#input-firstname").value;
         firstName = firstName.trim() || "Peter";
@@ -62,18 +42,8 @@
         document.querySelector("#output").innerHTML = `${greeting} ${firstName} ${lastName}`;
     }
 
-    let button1 = document.querySelector("#btn-hello");
-    let button2 = document.querySelector("#btn-goodbye");
-    button1.onclick = sayHello;
-    button2.onclick = sayGoodBye;
-
-    // 1 - get a reference to the button
-    // 2 - add a click event to button that calls a `sayHello` function
-    // 3 - create a `sayHello()` function
-    // 3A - get name of person from the <input>
-    // 3B - get a reference to the #output <p>
-    // 3C - update HTML of #output <p>
-    
-    </script>
+    document.querySelector("#btn-hello").onclick = () => greet("Hello");
+    document.querySelector("#btn-goodbye").onclick = () => greet("Goodbye");
+  </script>
 </body>
 </html>
