@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Greeter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Ubuntu', sans-serif;
+    }
+
+    label {
+      font-size: 14pt;
+    }
+
+    * {
+      font-size: 1.5em;
+      font-family: 'Ubuntu', sans-serif;
+    }
+
+    button {
+      width: 150px;
+      height: 50px;
+      font-size: 14pt;
+      font-family: 'Ubuntu', sans-serif;
+    }
+
+    @media only screen and (min-width: 1024px) {
+      body {
+        background-color: gray;
+        padding: 100px;
+      }
+    }
+  </style>
+  <script>
+    "use strict";
+    let init = () => {
+      document.querySelector("#btn-hello").onclick = () => greet("Hello");
+      document.querySelector("#btn-goodbye").onclick = () => greet("Goodbye");
+
+      //change paragraph color and background color
+      let paragraph = document.querySelector("p");
+      paragraph.style.backgroundColor = "darkgray";
+      paragraph.style.color = "darkgreen";
+    }
+
+    let greet = greeting => {
+      //get first name value or set to Peter if there is no input
+      let firstName = document.querySelector("#input-firstname").value;
+      firstName = firstName.trim() || "Peter";
+
+      //get last name value or set to Parker if there is no input
+      let lastName = document.querySelector("#input-lastname").value;
+      lastName = lastName.trim() || "Parker";
+
+      //if checkbox is checked then capitalize output
+      if (document.querySelector("#checkbox-shout").checked) {
+        firstName = firstName.toUpperCase();
+        lastName = lastName.toUpperCase();
+        greeting = greeting.toUpperCase();
+      }
+      
+      document.querySelector("#output").innerHTML = `${greeting} ${firstName} ${lastName}`;
+    }
+
+    window.onload = init;
+  </script>
+</head>
+
+<body>
+  <button id="btn-hello">Say Hello</button>
+  <button id="btn-goodbye">Say Goodbye</button>
+  <input type="checkbox" id="checkbox-shout">
+  <label for="checkbox-shout">Shoutify</label>
+  <hr>
+  <input id="input-firstname" placeholder="Type in your first name">
+  <br>
+  <input id="input-lastname" placeholder="Type in your last name">
+  <p id="output">???</p>
+</body>
+
+</html>
