@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Third Canvas</title>
+	<style>
+		canvas {
+			border: 1px solid gray;
+		}
+	</style>
+	<script>
+		// #0 - in this class we will always use ECMAScript 5's "strict" mode
+		// See what 'use strict' does here:
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
+		"use strict";
+
+		// #1 call the `init` function after the pages loads
+		window.onload = init;
+
+		let ctx;
+
+		function init() {
+			console.log("page loaded!");
+			// #2 Now that the page has loaded, start drawing!
+
+			// A - `canvas` variable points at <canvas> tag
+			let canvas = document.querySelector("canvas");
+
+			// B - the `ctx` variable points at a "2D drawing context"
+			ctx = canvas.getContext("2d");
+			
+			update();
+		}
+
+		function update() {
+			requestAnimationFrame(update);
+			drawRandomRect(ctx);
+		}
+
+		function drawRandomRect(ctx) {
+			ctx.fillStyle = getRandomColor();
+			ctx.strokeStyle = getRandomColor();
+			ctx.lineWidth = getRandomInt(2, 10);
+			ctx.beginPath();
+			ctx.rect(getRandomInt(0, 1280), getRandomInt(0, 720), getRandomInt(0, 100), getRandomInt(0, 100));
+			ctx.arc(getRandomInt(0, 1280), getRandomInt(0, 720), getRandomInt(10, 150), 0, Math.PI * Math.random() * 2, false);
+			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
+		}
+
+		// handy helper functions!
+		function getRandomColor() {
+			function getByte() {
+				return 55 + Math.round(Math.random() * 200);
+			}
+			return "rgba(" + getByte() + "," + getByte() + "," + getByte() + ",.8)";
+		}
+
+		function getRandomInt(min, max) {
+			return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+	</script>
+</head>
+
+<body>
+	<canvas width="1280" height="720">
+		Get a real browser!
+	</canvas>
+</body>
+
+</html>
