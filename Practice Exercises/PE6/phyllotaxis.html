@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Sine Start</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+    <script>
+        "use strict";
+        const canvasWidth = 1280, canvasHeight = 720;
+        let ctx;
+        let fps = 240;
+        let n = 0;
+        let radius = 3;
+        const c = 4;
+        const divergence = 137.2;
+        let angle = 0;
+        let increase = Math.PI * 2 / 1000;
+        let sinDif;
+
+        window.onload = init;
+
+        function init() {
+            ctx = canvas.getContext("2d");
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            loop();
+        }
+
+        function loop() {
+            setTimeout(loop, 1000 / fps);
+
+            // each frame draw a new dot
+            // `a` is the angle
+            // `r` is the radius from the center (e.g. "Pole") of the flower
+            // `c` is the "padding/spacing" between the dots
+            let a = n * dtr(divergence);
+            let r = c * Math.sqrt(n);
+            let x = r * Math.cos(a) + canvasWidth / 2;
+            let y = r * Math.sin(a) + canvasHeight / 2;
+
+            //let color = `rgb(${n % 256},0,255)`;
+            let aDegrees = (n * divergence) % 361;
+            let color = `hsl(${n / 5 % 361},100%,50%)`;
+            sinDif = Math.sin(angle) / 2 + 0.5;
+
+            if (n < 200) {
+
+                if (sinDif > 0.1) {
+                    drawCircle(ctx, x + 100, y + 100, radius * sinDif, color);
+                    drawCircle(ctx, x - 100, y - 100, radius * sinDif, color);
+                    drawCircle(ctx, x + 100, y - 100, radius * sinDif, color);
+                    drawCircle(ctx, x - 100, y + 100, radius * sinDif, color);
+                }
+
+            }
+            else if (n < 1700) {
+                if (sinDif > 0.1) {
+                    drawCircle(ctx, x, y, radius * sinDif, color);
+                }
+
+            }
+            else {
+                if (sinDif > 0.1) {
+                    drawCircle(ctx, x - canvasWidth / 2, y - canvasHeight / 2, radius * sinDif, color);
+                    drawCircle(ctx, x - canvasWidth / 2, y + canvasHeight / 2, radius * sinDif, color);
+                    drawCircle(ctx, x + canvasWidth / 2, y + canvasHeight / 2, radius * sinDif, color);
+                    drawCircle(ctx, x + canvasWidth / 2, y - canvasHeight / 2, radius * sinDif, color);
+                }   
+            }
+
+            angle += increase;
+            n++;
+        }
+
+        // helpers
+        function dtr(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+
+        function drawCircle(ctx, x, y, radius, color) {
+            ctx.save();
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+    </script>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+
+</body>
+
+</html>
