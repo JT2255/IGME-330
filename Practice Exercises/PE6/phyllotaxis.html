@@ -13,7 +13,7 @@
         "use strict";
         const canvasWidth = 1280, canvasHeight = 720;
         let ctx;
-        let fps = 240;
+        let fps = 60;
         let n = 0;
         let radius = 3;
         const c = 4;
@@ -34,12 +34,13 @@
             loop();
         }
 
-        // reset canvas and default values for parameters
+        // reset canvas and default values for lightshow
         const reloadCanvas = () => {
             angle = 0;
             n = 1;
             radius = 3;
             divergence = 137.2;
+            fps = 240
             ctx.fillRect(0, 0, canvasWidth, canvasHeight);
             color = `hsl(${n / 5 % 361},100%,50%)`;
             lightShow = document.querySelector("#cb-lightshow").checked;
@@ -53,6 +54,7 @@
             if (!lightShow) {
                 divergence = Number(document.querySelector("#ctrl-divergence").value);
                 radius = Number(document.querySelector("#ctrl-radius").value);
+                fps = Number(document.querySelector("#ctrl-fps").value);
 
                 switch (document.querySelector("#ctrl-color").value) {
                     case "age":
@@ -151,7 +153,7 @@
 </head>
 
 <body>
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas"></canvas>   
     <div>
         <lable for="#ctrl-divergence">Divergence Angle</lable>
         <select id="ctrl-divergence">
@@ -176,6 +178,13 @@
             <option value="angle">Angle RGB</option>
             <option value="quadrant">Quadrant HSL</option>
         </select>
+        <label>FPS</label>
+        <select id="ctrl-fps">
+            <option value="30">30</option>
+            <option value="60" selected>60</option>
+            <option value="120">120</option>
+            <option value="144">144</option>
+        </select>
         <button id="btn-reload">Reload Canvas</button>
         <br>
         <input type="checkbox" id="cb-lightshow">
@@ -183,6 +192,35 @@
         <input type="checkbox" id="cb-fourcorners">
         <label>Four Corners (Reload Required)</label>
     </div>
+    <div id="info">
+        <h2>About this app</h2>
+        <ul>
+            <li>The "Divergence Angle" dropdown allows the user to change the divergence angle</li>
+            <li>The "Radius" dropdown allows the user to change the radius of the circles being placed</li>
+            <li>The "Color Mode" dropdown allows the user to change how the new circles are colored
+                <ul>
+                    <li>Age RGB: Changes the color with an RGB value based on the number of circles</li>
+                    <li>Age HSL: Changes the color with an HSL value based on the number of circles</li>
+                    <li>Angle RGB: Changes the color with an RGB value based on the angle of the dot</li>
+                    <li>Quadrant HSL: Changes the color with an HSL value based on what quadrant the circle is located</li>
+                </ul>
+            </li>
+            <li>The "FPS" dropwdown allows the user to change the FPS of the animation (60 or 120 FPS recommended)</li>
+            <li>The "Reload Canvas" button resets the current canvas and resets the number of circles</li>
+            <li>The "Four Corners" mode causes the phyllotaxis pattern to appear from all 4 corners instead of the center</li>
+            <li>The "Lightshow" mode shows a custom pattern with movement and radius scaling</li>
+            <li>Changes made from starter code:
+                <ul>
+                    <li>Added color selector dropdown</li>
+                    <li>Added divergence angle dropdown</li>
+                    <li>Added radius dropdown</li>
+                    <li>Added FPS selector and made default FPS 60</li>
+                    <li>Increased canvas resolution to 1280 x 720</li>
+                    <li>Added "Four Corners" mode which creates phyllotaxis pattern in all 4 corners</li>
+                    <li>Added "Lightshow" mode which creates a custom pattern with preset parameters</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
 </body>
-
 </html>
