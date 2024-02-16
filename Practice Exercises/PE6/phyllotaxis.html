@@ -22,6 +22,7 @@
         let increase = Math.PI * 2 / 1000;
         let sinDif;
         let lightShow = false;
+        let fourCorners = false;
         let color;
 
         const init = () => {
@@ -42,6 +43,7 @@
             ctx.fillRect(0, 0, canvasWidth, canvasHeight);
             color = `hsl(${n / 5 % 361},100%,50%)`;
             lightShow = document.querySelector("#cb-lightshow").checked;
+            fourCorners = document.querySelector("#cb-fourcorners").checked;
         }
 
         const loop = () => {
@@ -116,6 +118,12 @@
 
                 angle += increase;
             }
+            else if (fourCorners) {
+                drawCircle(ctx, x - canvasWidth / 2, y - canvasHeight / 2, radius, color);
+                drawCircle(ctx, x - canvasWidth / 2, y + canvasHeight / 2, radius, color);
+                drawCircle(ctx, x + canvasWidth / 2, y + canvasHeight / 2, radius, color);
+                drawCircle(ctx, x + canvasWidth / 2, y - canvasHeight / 2, radius, color);
+            }
             else {
                 drawCircle(ctx, x, y, radius, color);
             }
@@ -172,6 +180,8 @@
         <br>
         <input type="checkbox" id="cb-lightshow">
         <label>Lightshow (Reload Required)</label>
+        <input type="checkbox" id="cb-fourcorners">
+        <label>Four Corners (Reload Required)</label>
     </div>
 </body>
 
