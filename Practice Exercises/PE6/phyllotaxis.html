@@ -17,23 +17,60 @@
         let n = 0;
         let radius = 3;
         const c = 4;
-        const divergence = 137.2;
+        let divergence = 137.2;
         let angle = 0;
         let increase = Math.PI * 2 / 1000;
         let sinDif;
+        let lightShow = false;
+        let color;
 
-        window.onload = init;
-
-        function init() {
+        const init = () => {
             ctx = canvas.getContext("2d");
             canvas.width = canvasWidth;
             canvas.height = canvasHeight;
             ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            document.querySelector("#btn-reload").onclick = reloadCanvas;
             loop();
         }
 
-        function loop() {
+        // reset canvas and default values for parameters
+        const reloadCanvas = () => {
+            angle = 0;
+            n = 1;
+            radius = 3;
+            divergence = 137.2;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            color = `hsl(${n / 5 % 361},100%,50%)`;
+            lightShow = document.querySelector("#cb-lightshow").checked;
+        }
+
+        const loop = () => {
             setTimeout(loop, 1000 / fps);
+            let aDegrees;
+
+            if (!lightShow) {
+                divergence = Number(document.querySelector("#ctrl-divergence").value);
+                radius = Number(document.querySelector("#ctrl-radius").value);
+
+                switch (document.querySelector("#ctrl-color").value) {
+                    case "age":
+                        color = `rgb(${n % 256},0,255)`;
+                        break;
+                    case "ageHSL":
+                        color = `hsl(${n / 5 % 361},100%,50%)`;
+                        break;
+                    case "angle":
+                        aDegrees = (n * divergence) % 256;
+                        color = `rgb(${aDegrees},0,255)`;
+                        break;
+                    case "quadrant":
+                        aDegrees = (n * divergence) % 361;
+                        color = `hsl(${aDegrees},100%,50%)`;
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             // each frame draw a new dot
             // `a` is the angle
@@ -44,46 +81,54 @@
             let x = r * Math.cos(a) + canvasWidth / 2;
             let y = r * Math.sin(a) + canvasHeight / 2;
 
-            //let color = `rgb(${n % 256},0,255)`;
-            let aDegrees = (n * divergence) % 361;
-            let color = `hsl(${n / 5 % 361},100%,50%)`;
+            // oscillating number multiplied to radius
             sinDif = Math.sin(angle) / 2 + 0.5;
 
-            if (n < 200) {
+            if (lightShow) {
+                color = `hsl(${n / 5 % 361},100%,50%)`;
 
-                if (sinDif > 0.1) {
-                    drawCircle(ctx, x + 100, y + 100, radius * sinDif, color);
-                    drawCircle(ctx, x - 100, y - 100, radius * sinDif, color);
-                    drawCircle(ctx, x + 100, y - 100, radius * sinDif, color);
-                    drawCircle(ctx, x - 100, y + 100, radius * sinDif, color);
+                if (n < 200) {
+                    if (sinDif > 0.1) {
+                        drawCircle(ctx, x + 100, y + 100, radius * sinDif, color);
+                        drawCircle(ctx, x - 100, y - 100, radius * sinDif, color);
+                        drawCircle(ctx, x + 100, y - 100, radius * sinDif, color);
+                        drawCircle(ctx, x - 100, y + 100, radius * sinDif, color);
+                    }
+                }
+                else if (n < 1700) {
+                    if (sinDif > 0.1) {
+                        drawCircle(ctx, x, y, radius * sinDif, color);
+                    }
+                }
+                else if (n < 5675) {
+                    if (sinDif > 0.1) {
+                        drawCircle(ctx, x - canvasWidth / 2, y - canvasHeight / 2, radius * sinDif, color);
+                        drawCircle(ctx, x - canvasWidth / 2, y + canvasHeight / 2, radius * sinDif, color);
+                        drawCircle(ctx, x + canvasWidth / 2, y + canvasHeight / 2, radius * sinDif, color);
+                        drawCircle(ctx, x + canvasWidth / 2, y - canvasHeight / 2, radius * sinDif, color);
+                    }
+                }
+                else {
+                    if (sinDif > 0.1) {
+                        drawCircle(ctx, x, y, radius * sinDif, color);
+                    }
                 }
 
-            }
-            else if (n < 1700) {
-                if (sinDif > 0.1) {
-                    drawCircle(ctx, x, y, radius * sinDif, color);
-                }
-
+                angle += increase;
             }
             else {
-                if (sinDif > 0.1) {
-                    drawCircle(ctx, x - canvasWidth / 2, y - canvasHeight / 2, radius * sinDif, color);
-                    drawCircle(ctx, x - canvasWidth / 2, y + canvasHeight / 2, radius * sinDif, color);
-                    drawCircle(ctx, x + canvasWidth / 2, y + canvasHeight / 2, radius * sinDif, color);
-                    drawCircle(ctx, x + canvasWidth / 2, y - canvasHeight / 2, radius * sinDif, color);
-                }   
+                drawCircle(ctx, x, y, radius, color);
             }
 
-            angle += increase;
             n++;
         }
 
         // helpers
-        function dtr(degrees) {
+        const dtr = (degrees) => {
             return degrees * (Math.PI / 180);
         }
 
-        function drawCircle(ctx, x, y, radius, color) {
+        const drawCircle = (ctx, x, y, radius, color) => {
             ctx.save();
             ctx.fillStyle = color;
             ctx.beginPath();
@@ -93,12 +138,41 @@
             ctx.restore();
         }
 
+        window.onload = init;
     </script>
 </head>
 
 <body>
     <canvas id="canvas"></canvas>
-
+    <div>
+        <lable for="#ctrl-divergence">Divergence Angle</lable>
+        <select id="ctrl-divergence">
+            <option value="137.1">137.1</option>
+            <option value="137.3">137.3</option>
+            <option value="137.5" selected>137.5</option>
+            <option value="137.7">137.7</option>
+            <option value="137.7">137.9</option>
+        </select>
+        <label>Radius</label>
+        <select id="ctrl-radius">
+            <option value="1">1</option>
+            <option value="1.5">1.5</option>
+            <option value="2" selected>2</option>
+            <option value="2.5">2.5</option>
+            <option value="3">3</option>
+        </select>
+        <label>Color Mode</label>
+        <select id="ctrl-color">
+            <option value="age">Age RGB</option>
+            <option value="ageHSL" selected>Age HSL</option>
+            <option value="angle">Angle RGB</option>
+            <option value="quadrant">Quadrant HSL</option>
+        </select>
+        <button id="btn-reload">Reload Canvas</button>
+        <br>
+        <input type="checkbox" id="cb-lightshow">
+        <label>Lightshow (Reload Required)</label>
+    </div>
 </body>
 
 </html>
