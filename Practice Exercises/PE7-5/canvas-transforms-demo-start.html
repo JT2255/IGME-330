@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Canvas Transforms Starter</title>
+    <style>
+        canvas {
+            border: 1px solid gray;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas width="640" height="480">
+        Get a real browser!
+    </canvas>
+    <script>
+        'use strict';
+        let ctx = document.querySelector('canvas').getContext('2d');
+        let rotation = 0;
+        let scale = 0;
+        let translate = 0;
+
+        loop();
+
+        function loop() {
+            requestAnimationFrame(loop);
+            rotation += .01;
+            scale += 0.001;
+            translate += 0.1;
+            // background
+            ctx.fillStyle = 'yellow';
+            ctx.fillRect(0, 0, 640, 480);
+
+            // draw a "better" triangle - why is this better? You'll see!
+            ctx.save();
+            ctx.translate(500, 100);
+            ctx.rotate(rotation);
+            ctx.scale(1.2, 1.2);
+            ctx.strokeStyle = "red";
+            ctx.fillStyle = "red";
+            ctx.lineWidth = "5";
+            ctx.beginPath();
+            ctx.moveTo(0, -50);
+            ctx.lineTo(50, 50);
+            ctx.lineTo(-50, 50);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.restore();
+
+            //additional triangle
+            ctx.save();
+            ctx.translate(200, 300);
+            ctx.rotate(-rotation);
+            ctx.scale(1.2, 1.2);
+            ctx.strokeStyle = "skyblue";
+            ctx.fillStyle = "red";
+            ctx.lineWidth = "5";
+            ctx.beginPath();
+            ctx.moveTo(0, -50);
+            ctx.lineTo(50, 50);
+            ctx.lineTo(-50, 50);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.restore();
+
+            //triangle using method
+            drawTri(ctx, 100, 100, 50, rotation, "pink", "skyblue", 1);
+
+            //moving shape
+            drawTri(ctx, translate, translate, 50, rotation, "black", "skyblue", scale);
+
+            drawSquare2(ctx, 200, 100, 100, 100, rotation, "purple", 0.75);
+            drawSquare2(ctx, 350, 100, 100, 100, -rotation, "purple", 0.5);
+            drawSquare2(ctx, 500, 300, 100, 100, Math.PI / 6, "purple", 1.25);
+
+            ctx.save();
+            ctx.translate(100, 0);
+            ctx.rotate(rotation);
+            
+            // set a bunch of state attributes
+            ctx.shadowOffsetX = 15;
+            ctx.shadowOffsetY = 15;
+            ctx.shadowColor = "rgba(153,50,204,.6)";
+            ctx.shadowBlur = 5;
+
+            // draw squares with our helper function
+            drawSquare1(ctx, 100, 0, 100, 100, "orange");
+            drawSquare1(ctx, 250, 0, 100, 100, "orange");
+            drawSquare1(ctx, 400, 0, 100, 100, "orange");
+
+            // draw a triangle
+            ctx.strokeStyle = "pink";
+            ctx.fillStyle = "green";
+            ctx.lineWidth = "5";
+            ctx.beginPath();
+            ctx.moveTo(500, 100);
+            ctx.lineTo(550, 200);
+            ctx.lineTo(450, 200);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+
+        function drawSquare1(ctx, x, y, width, height, fillStyle) {
+            ctx.save();
+            ctx.fillStyle = fillStyle;
+            ctx.fillRect(x, y, width, height);
+            ctx.restore();
+        }
+
+        function drawSquare2(ctx, x, y, width, height, rotation, fillStyle, scale) {
+            ctx.save();
+            ctx.fillStyle = fillStyle;
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            ctx.scale(scale, scale);
+            ctx.fillRect(0 - width / 2, 0 - height / 2, width, height);
+            ctx.restore();
+        }
+
+        function drawTri(ctx, x, y, length, rotation, fillStyle, strokeStyle, scale) {
+            ctx.save();
+            ctx.fillStyle = fillStyle;
+            ctx.strokeStyle = strokeStyle;
+            ctx.lineWidth = 1;
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            ctx.scale(scale, scale);
+            ctx.beginPath();
+            ctx.moveTo(0, -length);
+            ctx.lineTo(length, length);
+            ctx.lineTo(-length, length);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+        }
+    </script>
+</body>
+
+</html>
