@@ -10,7 +10,7 @@
 import * as utils from './utils.js';
 
 let ctx, canvasWidth, canvasHeight, gradient, analyserNode, audioData;
-
+let rockets = [];
 
 function setupCanvas(canvasElement, analyserNodeRef) {
     // create drawing context
@@ -23,6 +23,14 @@ function setupCanvas(canvasElement, analyserNodeRef) {
     analyserNode = analyserNodeRef;
     // this is the array where the analyser data will be stored
     audioData = new Uint8Array(analyserNode.fftSize / 2);
+
+
+    rockets.push(new RocketSprite(utils.getRandom(50, 250), canvasHeight, 10, 10, true));
+    rockets.push(new RocketSprite(utils.getRandom(500, 750), canvasHeight, 10, 10, true));
+    rockets.push(new RocketSprite(0, utils.getRandom(50, 150), 10, 10, false));
+    rockets.push(new RocketSprite(0, utils.getRandom(400, 550), 10, 10, false));
+
+    console.log(rockets);
 }
 
 function draw(params = {}) {
@@ -94,51 +102,42 @@ function draw(params = {}) {
 
         ctx.restore();
     }
-
-    // 6 - bitmap manipulation
-    // TODO: right now. we are looping though every pixel of the canvas (320,000 of them!), 
-    // regardless of whether or not we are applying a pixel effect
-    // At some point, refactor this code so that we are looping though the image data only if
-    // it is necessary
-
-    // A) grab all of the pixels on the canvas and put them in the `data` array
-    // `imageData.data` is a `Uint8ClampedArray()` typed array that has 1.28 million elements!
-    // the variable `data` below is a reference to that array 
-    // let imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
-    // let data = imageData.data;
-    // let length = data.length;
-    // let width = imageData.width; // not using here
-
-    // // B) Iterate through each pixel, stepping 4 elements at a time (which is the RGBA for 1 pixel)
-    // for (let i = 0; i < length; i += 4) {
-    //     // C) randomly change every 20th pixel to black
-    //     if (params.showNoise && Math.random() < .05) {
-    //         // data[i] is the red channel
-    //         // data[i+1] is the green channel
-    //         // data[i+2] is the blue channel
-    //         // data[i+3] is the alpha channel
-    //         data[i] = data[i + 1] = data[i + 2] = 0; // zero out the red and green and blue channels
-    //         data[i] = 0; // make the red channel 100% red
-    //     } // end if
-
-    //     if (params.showInvert) {
-    //         let red = data[i], green = data[i + 1], blue = data[i + 2];
-    //         data[i] = 255 - red; // set red
-    //         data[i + 1] = 255 - green; // set green
-    //         data[i + 2] = 255 - blue; // set blue
-    //         //data[i + 3] is the alpha
-    //     }
-    // } // end for
-
-    // if (params.showEmboss) {
-    //     for (let i = 0; i < length; i++) {
-    //         if (i % 4 == 3) continue; // skip alpha channel
-    //         data[i] = 127 + 2 * data[i] - data[i + 4] - data[i + width * 4];
-    //     }
-    // }
-
-    // // D) copy image data back to canvas
-    // ctx.putImageData(imageData, 0, 0);
 }
 
-export { setupCanvas, draw };
+class RocketSprite {
+    constructor(x, y, width, height, up) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.up = up;
+    }
+
+    update() {
+        if (this.up) {
+            this.y -= 1;
+
+        if (this.y < -10) {
+            this.y = canvasHeight + utils.getRandom(0, 50);
+            this.x = utils.getRandom(50, canvasWidth - 50);
+        }
+        }
+        else {
+            this.x += 1;
+
+            if (this.x > canvasWidth + 10) {
+                this.x = 0 - utils.getRandom(0, 50);
+                this.y = utils.getRandom(50, canvasHeight - 50);
+            }
+        }
+        
+    } 
+
+    draw(ctx) {
+        ctx.save();
+        ctx.fillStyle = "red";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+}
+
+export { setupCanvas, draw, rockets, ctx };

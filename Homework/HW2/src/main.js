@@ -12,7 +12,7 @@ import * as audio from './audio.js';
 import * as canvas from './canvas.js';
 
 const drawParams = {
-  showGradient : true,
+  showGradient : false,
   showBars : true,
   showCircles : true,
 };
@@ -151,6 +151,10 @@ function setupUI(canvasElement) {
 function loop() {
   setTimeout(loop, 1000 / 60);
   canvas.draw(drawParams);
+  for (let r of canvas.rockets) {
+    r.update();
+    r.draw(canvas.ctx);
+  }
 }
 
 function toggleHighshelf() {
