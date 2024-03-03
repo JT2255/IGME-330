@@ -64,7 +64,8 @@ function setupWebaudio(filePath) {
 
     // 8 - connect the nodes - we now have an audio graph
     sourceNode.connect(biquadFilter);
-    biquadFilter.connect(analyserNode);
+    biquadFilter.connect(lowshelfBiquad);
+    lowshelfBiquad.connect(analyserNode);
     analyserNode.connect(gainNode);
     gainNode.connect(distortionFilter);
     distortionFilter.connect(audioCtx.destination);
