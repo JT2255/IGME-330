@@ -1,0 +1,58 @@
+{
+    "title": "Audio Visualizer",
+    "songs": [
+        {
+            "name": "Red Shift",
+            "composer": "Will Meister",
+            "location": "media/Red Shift.mp3"
+        },
+        {
+            "name": "Many Moons",
+            "composer": "Will Meister",
+            "location": "media/Many Moons.mp3"
+        },
+        {
+            "name": "Solar Wind",
+            "composer": "Will Meister",
+            "location": "media/Solar Wind.mp3"
+        }
+    ],
+    "ui": [
+        {
+            "component": "volume",
+            "value": "10"
+        },
+        {
+            "component": "gradient",
+            "value": "false"
+        },
+        {
+            "component": "bars",
+            "value": "true"
+        },
+        {
+            "component": "circles",
+            "value": "true"
+        },
+        {
+            "component": "highshelf",
+            "value": "true"
+        },
+        {
+            "component": "lowshelf",
+            "value": "false"
+        },
+        {
+            "component": "distortion",
+            "value": "false"
+        },
+        {
+            "component": "rockets",
+            "value": "true"
+        },
+        {
+            "component": "waveform",
+            "value": "false"
+        }
+    ]
+}

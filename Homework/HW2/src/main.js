@@ -15,16 +15,19 @@ const drawParams = {
   showGradient : false,
   showBars : true,
   showCircles : true,
+  useWaveform : false
 };
 
 let highshelf;
 let lowshelf;
 let distortion;
 let distortionAmount = 20;
+let rocketDraw;
+let fps = 60;
 
 // 1 - here we are faking an enumeration
 const DEFAULTS = Object.freeze({
-  sound1: "media/Red Shift.mp3"
+  sound1: "media/Many Moons.mp3"
 });
 
 function init() {
@@ -39,8 +42,8 @@ function init() {
 
 function setupUI(canvasElement) {
   // A - hookup fullscreen button
-  const fsButton = document.querySelector("#fsButton");
-  const playButton = document.querySelector("#playButton");
+  const fsButton = document.querySelector("#btn-fs");
+  const playButton = document.querySelector("#btn-play");
 
   // add .onclick event to button
   fsButton.onclick = e => {
@@ -72,8 +75,8 @@ function setupUI(canvasElement) {
   };
 
   // C - hookup volume slider & label
-  let volumeSlider = document.querySelector("#volumeSlider");
-  let volumeLabel = document.querySelector("#volumeLabel");
+  let volumeSlider = document.querySelector("#slider-volume");
+  let volumeLabel = document.querySelector("#label-volume");
 
   // add .oninput event to slider
   volumeSlider.oninput = e => {
@@ -88,7 +91,7 @@ function setupUI(canvasElement) {
   volumeSlider.dispatchEvent(new Event("input"));
 
   // D - hookup track <select>
-  let trackSelect = document.querySelector("#trackSelect");
+  let trackSelect = document.querySelector("#select-track");
   // add .onchange event to <select>
   trackSelect.onchange = e => {
     audio.loadSoundFile(e.target.value);
@@ -99,13 +102,16 @@ function setupUI(canvasElement) {
     }
   }
 
-  let gradientCheckbox = document.querySelector("#gradientCB");
-  let barCheckbox = document.querySelector("#barsCB");
-  let circleCheckbox = document.querySelector("#circlesCB");
+  let gradientCheckbox = document.querySelector("#cb-gradient");
+  let barCheckbox = document.querySelector("#cb-bars");
+  let circleCheckbox = document.querySelector("#cb-circles");
   let highshelfCheckbox = document.querySelector("#cb-highshelf");
   let lowshelfCheckbox = document.querySelector("#cb-lowshelf");
   let distortionCheckbox = document.querySelector("#cb-distortion");
   let distortionSlider = document.querySelector("#slider-distortion");
+  let rocketCheckbox = document.querySelector("#cb-rockets");
+  let waveformCheckbox = document.querySelector("#cb-waveform");
+  rocketDraw = rocketCheckbox.checked;
   highshelf = highshelfCheckbox.checked;
   lowshelf = lowshelfCheckbox.checked;
   distortion = distortionCheckbox.checked;
@@ -124,6 +130,16 @@ function setupUI(canvasElement) {
   circleCheckbox.onchange = e => {
     if (e.target.checked) { drawParams.showCircles = true; }
     else { drawParams.showCircles = false; } 
+  }
+
+  rocketCheckbox.onchange = e => {
+    if (e.target.checked) { rocketDraw = true; }
+    else {rocketDraw = false; }
+  }
+
+  waveformCheckbox.onchange = e => {
+    if (e.target.checked) { drawParams.useWaveform = true; }
+    else { drawParams.useWaveform = false; }
   }
 
   highshelfCheckbox.onchange = e => { 
@@ -149,11 +165,14 @@ function setupUI(canvasElement) {
 } // end setupUI
 
 function loop() {
-  setTimeout(loop, 1000 / 60);
+  setTimeout(loop, 1000 / fps);
   canvas.draw(drawParams);
-  for (let r of canvas.rockets) {
-    r.update();
-    r.draw(canvas.ctx);
+
+  if (rocketDraw) {
+    for (let r of canvas.rockets) {
+      r.update();
+      r.draw(canvas.ctx);
+    }
   }
 }
 

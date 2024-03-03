@@ -10,7 +10,7 @@
 import * as utils from './utils.js';
 
 let ctx, canvasWidth, canvasHeight, gradient, analyserNode, audioData;
-let rockets = [];
+let rockets = [], rocketImg = new Image();
 
 function setupCanvas(canvasElement, analyserNodeRef) {
     // create drawing context
@@ -25,25 +25,25 @@ function setupCanvas(canvasElement, analyserNodeRef) {
     audioData = new Uint8Array(analyserNode.fftSize / 2);
 
 
-    rockets.push(new RocketSprite(utils.getRandom(50, 250), canvasHeight, 10, 10, true));
-    rockets.push(new RocketSprite(utils.getRandom(500, 750), canvasHeight, 10, 10, true));
-    rockets.push(new RocketSprite(0, utils.getRandom(50, 150), 10, 10, false));
-    rockets.push(new RocketSprite(0, utils.getRandom(400, 550), 10, 10, false));
-
-    console.log(rockets);
+    rockets.push(new RocketSprite(utils.getRandom(50, 250), canvasHeight + utils.getRandom(0, 100), 30, 40, true));
+    rockets.push(new RocketSprite(utils.getRandom(500, 750), canvasHeight, 30, 40, true));
+    rockets.push(new RocketSprite(utils.getRandom(50, 150), 0 + utils.getRandom(0, 100), 30, 40, false));
+    rockets.push(new RocketSprite(utils.getRandom(400, 550), 0, 30, 40, false));
+    rocketImg.src = "./media/rocketship.png";
 }
 
 function draw(params = {}) {
-    // 1 - populate the audioData array with the frequency data from the analyserNode
-    // notice these arrays are passed "by reference" 
-    analyserNode.getByteFrequencyData(audioData);
-    // OR
-    //analyserNode.getByteTimeDomainData(audioData); // waveform data
+    if (params.useWaveform) {
+        analyserNode.getByteTimeDomainData(audioData); // waveform data
+    }
+    else {
+        analyserNode.getByteFrequencyData(audioData); // frequency data
+    }
 
     // 2 - draw background
     ctx.save();
     ctx.fillStyle = "black";
-    ctx.globalAlpha = .1;
+    ctx.globalAlpha = .5;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     ctx.restore();
 
@@ -111,32 +111,42 @@ class RocketSprite {
         this.width = width;
         this.height = height;
         this.up = up;
+        this.speed = 1;
     }
 
     update() {
         if (this.up) {
-            this.y -= 1;
+            this.y -= 1 * this.speed;
 
-        if (this.y < -10) {
-            this.y = canvasHeight + utils.getRandom(0, 50);
-            this.x = utils.getRandom(50, canvasWidth - 50);
-        }
-        }
-        else {
-            this.x += 1;
-
-            if (this.x > canvasWidth + 10) {
-                this.x = 0 - utils.getRandom(0, 50);
-                this.y = utils.getRandom(50, canvasHeight - 50);
+            if (this.y < -50) {
+                this.y = canvasHeight + utils.getRandom(0, 50);
+                this.x = utils.getRandom(50, canvasWidth - 50);
+                this.speed = utils.getRandom(1, 2);
             }
         }
-        
-    } 
+        else {
+            this.y -= 1 * this.speed;
+            
+            if (this.y < -canvasWidth - 50) {
+                this.y = 50 - utils.getRandom(0, 50);
+                this.x = utils.getRandom(50, canvasHeight - 50);
+                this.speed = utils.getRandom(1, 2);
+            }
+        }
+    }
 
     draw(ctx) {
-        ctx.save();
-        ctx.fillStyle = "red";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        if (this.up) {
+            ctx.save();
+            ctx.drawImage(rocketImg, this.x, this.y, this.width, this.height);
+            ctx.restore();
+        }
+        else {
+            ctx.save();
+            ctx.rotate(Math.PI / 2);
+            ctx.drawImage(rocketImg, this.x, this.y, this.width, this.height);
+            ctx.restore();
+        }
     }
 }
 
