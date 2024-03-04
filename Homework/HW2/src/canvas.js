@@ -8,9 +8,10 @@
 */
 
 import * as utils from './utils.js';
+import { highshelf } from './main.js';
 
 let ctx, canvasWidth, canvasHeight, gradient, analyserNode, audioData;
-let rockets = [], rocketImg = new Image();
+let rockets = [], rocketImg = new Image(), counter;
 
 function setupCanvas(canvasElement, analyserNodeRef) {
     // create drawing context
@@ -24,11 +25,10 @@ function setupCanvas(canvasElement, analyserNodeRef) {
     // this is the array where the analyser data will be stored
     audioData = new Uint8Array(analyserNode.fftSize / 2);
 
-
-    rockets.push(new RocketSprite(utils.getRandom(50, 250), canvasHeight + utils.getRandom(0, 100), 30, 40, true));
-    rockets.push(new RocketSprite(utils.getRandom(500, 750), canvasHeight, 30, 40, true));
-    rockets.push(new RocketSprite(utils.getRandom(50, 150), 0 + utils.getRandom(0, 100), 30, 40, false));
-    rockets.push(new RocketSprite(utils.getRandom(400, 550), 0, 30, 40, false));
+    rockets.push(new RocketSprite(utils.getRandom(50, 250), canvasHeight + utils.getRandom(0, 100), 30, 40, true, 1));
+    rockets.push(new RocketSprite(utils.getRandom(500, 750), canvasHeight, 30, 40, true, 1));
+    rockets.push(new RocketSprite(utils.getRandom(50, 150), 0 + utils.getRandom(0, 100), 30, 40, false, 1));
+    rockets.push(new RocketSprite(utils.getRandom(400, 550), 0, 30, 40, false, 1));
     rocketImg.src = "./media/rocketship.png";
 }
 
@@ -43,7 +43,7 @@ function draw(params = {}) {
     // 2 - draw background
     ctx.save();
     ctx.fillStyle = "black";
-    ctx.globalAlpha = .5;
+    ctx.globalAlpha = .1;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     ctx.restore();
 
@@ -61,6 +61,7 @@ function draw(params = {}) {
         let barSpacing = 4;
         let barWidth = 10;
         let barHeight = 150;
+        counter = 0
         ctx.fillStyle = 'rgba(255, 255, 255, 0.50)';
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.50)';
         ctx.save();
@@ -69,6 +70,7 @@ function draw(params = {}) {
         for (let b of audioData) {
             let percent = b / 255;
             if (percent < .01) percent = .01;
+            counter += percent;
             ctx.translate(barSpacing, 0);
             ctx.rotate(Math.PI * 2 / 32);
             ctx.save();
@@ -80,6 +82,33 @@ function draw(params = {}) {
         }
 
         ctx.restore();
+
+        //when the percent of all of the data is higher than a specific amount, increase size of rockets
+        //typically makes rockets larger on drum beats
+        if (highshelf) {
+            if (counter > 30) {
+                for (let r of rockets) {
+                    r.scale = 1.1;
+                }
+            }
+            else {
+                for (let r of rockets) {
+                    r.scale = 1;
+                }
+            }
+        }
+        else {
+            if (counter > 15) {
+                for (let r of rockets) {
+                    r.scale = 1.1;
+                }
+            }
+            else {
+                for (let r of rockets) {
+                    r.scale = 1;
+                }
+            }
+        }
     }
 
     // 5 - draw circles
@@ -92,7 +121,6 @@ function draw(params = {}) {
         for (let i = 0; i < audioData.length; i++) {
             let percent = audioData[i] / 255;
             let circleRadius = percent * maxRadius;
-
             ctx.beginPath();
             ctx.fillStyle = utils.makeColor(255, 255, 255, .02);
             ctx.arc(canvasWidth / 2, canvasHeight / 2, circleRadius, 0, 2 * Math.PI, false);
@@ -104,16 +132,19 @@ function draw(params = {}) {
     }
 }
 
+//class for rockets
 class RocketSprite {
-    constructor(x, y, width, height, up) {
+    constructor(x, y, width, height, up, scale) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.up = up;
         this.speed = 1;
+        this.scale = scale;
     }
 
+    //update rocket position and loop around screen if it hits the border
     update() {
         if (this.up) {
             this.y -= 1 * this.speed;
@@ -126,7 +157,7 @@ class RocketSprite {
         }
         else {
             this.y -= 1 * this.speed;
-            
+
             if (this.y < -canvasWidth - 50) {
                 this.y = 50 - utils.getRandom(0, 50);
                 this.x = utils.getRandom(50, canvasHeight - 50);
@@ -135,17 +166,35 @@ class RocketSprite {
         }
     }
 
+    //draw rocket each frame
     draw(ctx) {
         if (this.up) {
-            ctx.save();
-            ctx.drawImage(rocketImg, this.x, this.y, this.width, this.height);
-            ctx.restore();
+            if (this.scale > 1) {
+                ctx.save();
+                ctx.drawImage(rocketImg, this.x - 1, this.y, this.width * this.scale, this.height * this.scale);
+                ctx.restore();
+            }
+            else {
+                ctx.save();
+                ctx.drawImage(rocketImg, this.x, this.y, this.width * this.scale, this.height * this.scale);
+                ctx.restore();
+            }
+
         }
         else {
-            ctx.save();
-            ctx.rotate(Math.PI / 2);
-            ctx.drawImage(rocketImg, this.x, this.y, this.width, this.height);
-            ctx.restore();
+            if (this.scale > 1) {
+                ctx.save();
+                ctx.rotate(Math.PI / 2);
+                ctx.drawImage(rocketImg, this.x - 1, this.y, this.width * this.scale, this.height * this.scale);
+                ctx.restore();
+            }
+            else {
+                ctx.save();
+                ctx.rotate(Math.PI / 2);
+                ctx.drawImage(rocketImg, this.x, this.y, this.width * this.scale, this.height * this.scale);
+                ctx.restore();
+            }
+
         }
     }
 }

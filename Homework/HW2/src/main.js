@@ -12,10 +12,10 @@ import * as audio from './audio.js';
 import * as canvas from './canvas.js';
 
 const drawParams = {
-  showGradient : false,
-  showBars : true,
-  showCircles : true,
-  useWaveform : false
+  showGradient: true,
+  showBars: true,
+  showCircles: true,
+  useWaveform: true
 };
 
 let highshelf;
@@ -24,7 +24,15 @@ let distortion;
 let distortionAmount = 20;
 let rocketDraw;
 let fps = 60;
-
+let gradientCheckbox;
+let barCheckbox;
+let circleCheckbox;
+let highshelfCheckbox;
+let lowshelfCheckbox;
+let distortionCheckbox;
+let distortionSlider;
+let rocketCheckbox;
+let waveformCheckbox;
 // 1 - here we are faking an enumeration
 const DEFAULTS = Object.freeze({
   sound1: "media/Many Moons.mp3"
@@ -37,6 +45,7 @@ function init() {
   let canvasElement = document.querySelector("canvas"); // hookup <canvas> element
   setupUI(canvasElement);
   canvas.setupCanvas(canvasElement, audio.analyserNode);
+  loadJsonXHR();
   loop();
 }
 
@@ -102,15 +111,15 @@ function setupUI(canvasElement) {
     }
   }
 
-  let gradientCheckbox = document.querySelector("#cb-gradient");
-  let barCheckbox = document.querySelector("#cb-bars");
-  let circleCheckbox = document.querySelector("#cb-circles");
-  let highshelfCheckbox = document.querySelector("#cb-highshelf");
-  let lowshelfCheckbox = document.querySelector("#cb-lowshelf");
-  let distortionCheckbox = document.querySelector("#cb-distortion");
-  let distortionSlider = document.querySelector("#slider-distortion");
-  let rocketCheckbox = document.querySelector("#cb-rockets");
-  let waveformCheckbox = document.querySelector("#cb-waveform");
+  gradientCheckbox = document.querySelector("#cb-gradient");
+  barCheckbox = document.querySelector("#cb-bars");
+  circleCheckbox = document.querySelector("#cb-circles");
+  highshelfCheckbox = document.querySelector("#cb-highshelf");
+  lowshelfCheckbox = document.querySelector("#cb-lowshelf");
+  distortionCheckbox = document.querySelector("#cb-distortion");
+  distortionSlider = document.querySelector("#slider-distortion");
+  rocketCheckbox = document.querySelector("#cb-rockets");
+  waveformCheckbox = document.querySelector("#cb-waveform");
   rocketDraw = rocketCheckbox.checked;
   highshelf = highshelfCheckbox.checked;
   lowshelf = lowshelfCheckbox.checked;
@@ -124,17 +133,17 @@ function setupUI(canvasElement) {
 
   barCheckbox.onchange = e => {
     if (e.target.checked) { drawParams.showBars = true; }
-    else { drawParams.showBars = false; } 
+    else { drawParams.showBars = false; }
   }
 
   circleCheckbox.onchange = e => {
     if (e.target.checked) { drawParams.showCircles = true; }
-    else { drawParams.showCircles = false; } 
+    else { drawParams.showCircles = false; }
   }
 
   rocketCheckbox.onchange = e => {
     if (e.target.checked) { rocketDraw = true; }
-    else {rocketDraw = false; }
+    else { rocketDraw = false; }
   }
 
   waveformCheckbox.onchange = e => {
@@ -142,7 +151,7 @@ function setupUI(canvasElement) {
     else { drawParams.useWaveform = false; }
   }
 
-  highshelfCheckbox.onchange = e => { 
+  highshelfCheckbox.onchange = e => {
     highshelf = e.target.checked;
     toggleHighshelf();
   }
@@ -211,10 +220,82 @@ function makeDistortionCurve(amount = 20) {
 
   for (let i = 0; i < n_samples; ++i) {
     let x = i * 2 / n_samples - 1;
-    curve[i] = x * Math.sin(x) * amount/5;
+    curve[i] = x * Math.sin(x) * amount / 5;
   }
 
   return curve;
 }
 
-export { init };
+function loadJsonXHR() {
+  const url = "data/av-data.json";
+  const xhr = new XMLHttpRequest();
+
+  xhr.onload = (e) => {
+    let json;
+    console.log(`In onload - HTTP Status Code = ${e.target.status}`);
+
+    try {
+      json = JSON.parse(e.target.response);
+    }
+    catch {
+      console.log("JSON file error");
+      return
+    }
+
+    const keys = Object.keys(json);
+
+    //loop through ui elements in JSON file and load their settings
+    for (let k of keys) {
+      if (k == "ui") {
+        const obj = json[k];
+
+        for (let c of obj) {
+          switch (c.component) {
+            case 'gradient':
+              gradientCheckbox.checked = c.value;
+              drawParams.showGradient = c.value;
+              break;
+            case 'bars':
+              barCheckbox.checked = c.value;
+              drawParams.showBars = c.value;
+              break;
+            case 'circles':
+              circleCheckbox.checked = c.value;
+              drawParams.showCircles = c.value;
+              break;
+            case 'highshelf':
+              highshelfCheckbox.checked = c.value;
+              highshelf = c.value;
+              toggleHighshelf();
+              break;
+            case 'lowshelf':
+              lowshelfCheckbox.checked = c.value;
+              lowshelf = c.value;
+              toggleLowshelf();
+              break;
+            case 'distortion':
+              distortionCheckbox.checked = c.value;
+              distortion = c.value;
+              toggleDistortion();
+              break;
+            case 'rockets':
+              rocketCheckbox.checked = c.value;
+              rocketDraw = c.value;
+              break;
+            case 'waveform':
+              waveformCheckbox.checked = c.value;
+              drawParams.useWaveform = c.value;
+            default:
+              break;
+          }
+        }
+      }
+    }
+  };
+
+  xhr.onerror = (e) => console.log(`In onerror - HTTP Status Code = ${e.target.status}`);
+  xhr.open("GET", url);
+  xhr.send();
+}
+
+export { init, highshelf };

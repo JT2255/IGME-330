@@ -19,40 +19,36 @@
     ],
     "ui": [
         {
-            "component": "volume",
-            "value": "10"
-        },
-        {
             "component": "gradient",
-            "value": "false"
+            "value": false
         },
         {
             "component": "bars",
-            "value": "true"
+            "value": true
         },
         {
             "component": "circles",
-            "value": "true"
+            "value": true
         },
         {
             "component": "highshelf",
-            "value": "true"
+            "value": true
         },
         {
             "component": "lowshelf",
-            "value": "false"
+            "value": false
         },
         {
             "component": "distortion",
-            "value": "false"
+            "value": false
         },
         {
             "component": "rockets",
-            "value": "true"
+            "value": true
         },
         {
             "component": "waveform",
-            "value": "false"
+            "value": false
         }
     ]
 }
