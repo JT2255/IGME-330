@@ -38,7 +38,7 @@ const DEFAULTS = Object.freeze({
   sound1: "media/Many Moons.mp3"
 });
 
-function init() {
+const init = () => {
   console.log("init called");
   console.log(`Testing utils.getRandomColor() import: ${utils.getRandomColor()}`);
   audio.setupWebaudio(DEFAULTS.sound1);
@@ -49,7 +49,7 @@ function init() {
   loop();
 }
 
-function setupUI(canvasElement) {
+const setupUI = (canvasElement) => {
   // A - hookup fullscreen button
   const fsButton = document.querySelector("#btn-fs");
   const playButton = document.querySelector("#btn-play");
@@ -120,10 +120,6 @@ function setupUI(canvasElement) {
   distortionSlider = document.querySelector("#slider-distortion");
   rocketCheckbox = document.querySelector("#cb-rockets");
   waveformCheckbox = document.querySelector("#cb-waveform");
-  rocketDraw = rocketCheckbox.checked;
-  highshelf = highshelfCheckbox.checked;
-  lowshelf = lowshelfCheckbox.checked;
-  distortion = distortionCheckbox.checked;
   distortionAmount = Number(distortionSlider.value);
 
   gradientCheckbox.onchange = e => {
@@ -173,7 +169,7 @@ function setupUI(canvasElement) {
 
 } // end setupUI
 
-function loop() {
+const loop = () => {
   setTimeout(loop, 1000 / fps);
   canvas.draw(drawParams);
 
@@ -185,7 +181,8 @@ function loop() {
   }
 }
 
-function toggleHighshelf() {
+//toggles highshelf filter
+const toggleHighshelf = () => {
   if (highshelf) {
     audio.biquadFilter.frequency.setValueAtTime(1000, audio.audioCtx.currentTime);
     audio.biquadFilter.gain.setValueAtTime(15, audio.audioCtx.currentTime);
@@ -195,7 +192,8 @@ function toggleHighshelf() {
   }
 }
 
-function toggleLowshelf() {
+//toggles lowshelf filter
+const toggleLowshelf = () => {
   if (lowshelf) {
     audio.lowshelfBiquad.frequency.setValueAtTime(1000, audio.audioCtx.currentTime);
     audio.lowshelfBiquad.gain.setValueAtTime(15, audio.audioCtx.currentTime);
@@ -205,7 +203,8 @@ function toggleLowshelf() {
   }
 }
 
-function toggleDistortion() {
+//toggles distortion filter
+const toggleDistortion = () => {
   if (distortion) {
     audio.distortionFilter.curve = null;
     audio.distortionFilter.curve = makeDistortionCurve(distortionAmount);
@@ -215,7 +214,8 @@ function toggleDistortion() {
   }
 }
 
-function makeDistortionCurve(amount = 20) {
+//calculates curve for distortion filter
+const makeDistortionCurve = (amount = 20) => {
   let n_samples = 256, curve = new Float32Array(n_samples);
 
   for (let i = 0; i < n_samples; ++i) {
@@ -226,7 +226,8 @@ function makeDistortionCurve(amount = 20) {
   return curve;
 }
 
-function loadJsonXHR() {
+//loads in ui data from JSON file
+const loadJsonXHR = () => {
   const url = "data/av-data.json";
   const xhr = new XMLHttpRequest();
 

@@ -13,7 +13,7 @@ import { highshelf } from './main.js';
 let ctx, canvasWidth, canvasHeight, gradient, analyserNode, audioData;
 let rockets = [], rocketImg = new Image(), counter;
 
-function setupCanvas(canvasElement, analyserNodeRef) {
+const setupCanvas = (canvasElement, analyserNodeRef) => {
     // create drawing context
     ctx = canvasElement.getContext("2d");
     canvasWidth = canvasElement.width;
@@ -32,7 +32,7 @@ function setupCanvas(canvasElement, analyserNodeRef) {
     rocketImg.src = "./media/rocketship.png";
 }
 
-function draw(params = {}) {
+const draw = (params = {}) => {
     if (params.useWaveform) {
         analyserNode.getByteTimeDomainData(audioData); // waveform data
     }

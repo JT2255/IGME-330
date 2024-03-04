@@ -7,8 +7,8 @@ let element, sourceNode, analyserNode, gainNode, biquadFilter, lowshelfBiquad, d
 
 // 3 - here we are faking an enumeration
 const DEFAULTS = Object.freeze({
-    gain : .5,
-    numSamples : 256
+    gain: .5,
+    numSamples: 256
 });
 
 // 4 - create a new array of 8-bit integers (0-255)
@@ -16,7 +16,7 @@ const DEFAULTS = Object.freeze({
 let audioData = new Uint8Array(DEFAULTS.numSamples / 2);
 
 // **Next are "public" methods - we are going to export all of these at the bottom of this file**
-function setupWebaudio(filePath) {
+const setupWebaudio = (filePath) => {
     // 1 - The || is because WebAudio has not been standardized across browsers yet
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     audioCtx = new AudioContext();
@@ -32,7 +32,7 @@ function setupWebaudio(filePath) {
 
     // 5 - create an analyser node  
     analyserNode = audioCtx.createAnalyser(); // note the UK spelling of "Analyser"
-    
+
     /*
     // 6
     We will request DEFAULTS.numSamples number of samples or "bins" spaced equally 
@@ -41,7 +41,7 @@ function setupWebaudio(filePath) {
     If DEFAULTS.numSamples (fftSize) is 256, then the first bin is 0 Hz, the second is 172 Hz, 
     the third is 344Hz, and so on. Each bin contains a number between 0-255 representing 
     the amplitude of that frequency.
-    */ 
+    */
 
     // fft stands for Fast Fourier Transform
     analyserNode.fftSize = DEFAULTS.numSamples;
@@ -71,21 +71,21 @@ function setupWebaudio(filePath) {
     distortionFilter.connect(audioCtx.destination);
 }
 
-function loadSoundFile(filePath) {
+const loadSoundFile = (filePath) => {
     element.src = filePath;
 }
 
-function playCurrentSound() {
+const playCurrentSound = () => {
     element.play();
 }
 
-function pauseCurrentSound() {
+const pauseCurrentSound = () => {
     element.pause();
 }
 
-function setVolume(value) {
+const setVolume = (value) => {
     value = Number(value); // make sure that it's a Number rather than a String
     gainNode.gain.value = value;
 }
 
-export {audioCtx, setupWebaudio, playCurrentSound, pauseCurrentSound, loadSoundFile, setVolume, analyserNode, biquadFilter, lowshelfBiquad, distortionFilter};
+export { audioCtx, setupWebaudio, playCurrentSound, pauseCurrentSound, loadSoundFile, setVolume, analyserNode, biquadFilter, lowshelfBiquad, distortionFilter };
