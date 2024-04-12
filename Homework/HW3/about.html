@@ -1,0 +1,62 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Visualizer</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body class="has-background-black">
+  <nav class="navbar has-shadow is-black">
+    <!-- logo / brand -->
+    <div class="navbar-brand">
+      <a class="navbar-item" href="index.html">
+        <i class="fas fa-music"></i>
+      </a>
+      <a class="navbar-burger" id="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </a>
+    </div>
+
+    <div class="navbar-menu has-background-black" id="nav-links">
+      <div class="navbar-start">
+        <a class="navbar-item is-hoverable has-text-white" href="index.html">
+          App
+        </a>
+        <a class="navbar-item is-hoverable has-text-white has-text-weight-bold" href="about.html">
+          About
+        </a>
+      </div> <!-- end navbar-start -->
+    </div>
+  </nav>
+
+  <!-- product info -->
+  <div class="columns is-vcentered">
+    <div class="column">
+      <div class="hero has-background-black is-large p-2">
+        <div class="hero-head">
+          <p class="title has-text-white">
+            Audio Visualizer Project
+          </p>
+          <img class="p-3" style="float:right;width:50%" src="media/visualizer.png" alt="audio visualizer">
+          <p class="subtitle has-text-white">
+            A project for visualizing audio in fun ways. This app takes audio files and visualizes them based off of the
+            amount of certain frequencies in the file. The app follows a space theme with both the songs and design of the site.
+          </p>
+        </div>
+        <div class="hero-footer has-text-white">Contact: jkt1886@rit.edu</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="src/hamburger.js"></script>
+</body>
+
+</html>
